@@ -1,5 +1,6 @@
 #include "OpenAddressing.h"
 #include "SeparateChaining.h"
+#include "Player.h"
 using namespace std;
 
 /* Examples of getKey functions
@@ -21,6 +22,31 @@ using namespace std;
  * }
  * */
 
+string getKeyOne(Player p) {
+    return p.getName() + to_string(p.getRbi());
+}
+string getKeyTwo(Player p) {
+    return p.getName() + to_string(p.getGames());
+}
+
 int main() {
+    vector<Player> players;
+    readFile( players, 2600);
+
+    int n = players.size() + 100 ;
+    for (int i = 0; i < 10; i++) {
+        new SeparateChaining<Player>(n);
+        new QuadraticProbing<Player>(n);
+        if (i < 5) {
+
+        }
+
+    }
+
+
+
     return 0;
 }
+
+
+

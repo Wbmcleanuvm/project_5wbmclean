@@ -11,6 +11,7 @@ using std::cout, std::endl, std::list, std::nullopt, std::optional, std::string,
 template<typename Keyable>
 class SeparateChaining {
 private:
+    int collisions = 0;
     struct pair {
         string key;
         Keyable value;
@@ -76,6 +77,7 @@ public:
         for (const pair& p : table[index]) {
             if (p.key == key) {
                 // We found the item
+                setCollisions(getCollisions() + 1);
                 return p.value;
             }
         }
@@ -115,6 +117,14 @@ public:
             cout << endl;
         }
         cout << "End of table" << endl;
+    }
+
+    void setCollisions(int c) {
+        collisions = c;
+    }
+
+    int getCollisions() const {
+        return collisions;
     }
 };
 

@@ -5,12 +5,14 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <cmath>
 using std::cout, std::endl, std::nullopt, std::optional, std::string, std::vector;
 
 template<typename Keyable>
-class LinearProbing {
+class QuadraticProbing {
 private:
     enum state {EMPTY, FILLED, REMOVED};
+    int hashCollisions;
     struct hashable {
         string key;
         Keyable value;
@@ -25,6 +27,12 @@ private:
             hashVal = hashVal * 37 + letter;
         }
         return hashVal % table.size();
+    }
+    int getHashCollisions() {
+        return hashCollisions;
+    }
+    void setHashCollisions(int n) {
+        hashCollisions = n;
     }
 
     // Find the next prime number
@@ -67,7 +75,7 @@ private:
 
 public:
     // Constructor
-    LinearProbing(unsigned long tableSize) {
+    QuadraticProbing(unsigned long tableSize) {
         // This will fill the table with default Keyables and EMPTY statuses
         table.resize(nextPrime(tableSize));
         numItems = 0;
@@ -79,9 +87,10 @@ public:
             // Hash the key to get an index
             unsigned long index = hornerHash(key);
             // Probe until we find a non-filled index
+            int n = 0;
             while (table[index].status == FILLED) {
                 // Add one to the index for linear probing
-                index += 1;
+                index += pow(n,n);
                 index %= table.size();
             }
             table[index].key = key;
@@ -103,15 +112,18 @@ public:
     optional<Keyable> find(string key) const {
         // Hash the key to get an index
         unsigned long index = hornerHash(key);
+        int n = 0;
         while (table[index].status != EMPTY) {
             // Check the index to see if the key matches
             if (table[index].status == FILLED && table[index].key == key) {
                 // We found the item
                 return table[index].value;
+
             }
             // Add one to the index for linear probing
-            index += 1;
+            index += pow(n,n);
             index %= table.size();
+            n += 1;
         }
         // We didn't find the item
         return nullopt;
@@ -121,10 +133,12 @@ public:
     bool remove(string key) {
         // Hash the key to get an index
         unsigned long index = hornerHash(key);
+        int n = 0;
         while (table[index].status != EMPTY) {
             // Check the index to see if the key matches
             if (table[index].status == FILLED && table[index].key == key) {
                 // We found the item
+                setHashCollisions(getHashCollisions() + 1);
                 // Remove it
                 table[index].key = string();
                 table[index].value = Keyable();
@@ -132,8 +146,9 @@ public:
                 return true;
             }
             // Add one to the index for linear probing
-            index += 1;
+            index += pow(n,n);
             index %= table.size();
+            n += 1;
         }
         // We didn't find the item
         return false;
