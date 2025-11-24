@@ -8,6 +8,7 @@
 #include <vector>
 #include <iomanip>
 using namespace std;
+using std::ofstream;
 using std::cout, std::endl, std::ifstream, std::string, std::vector, std::right, std::left;
 
 class Player {
@@ -157,10 +158,11 @@ public:
 };
 
     bool readFile(vector<Player>& players, int i) {
+        string filename = "baseball_hitting.csv";
         players.clear();
         int x = 0;
         ifstream fileIn;
-        fileIn.open("../baseball_hitting.csv");
+        fileIn.open(filename);
         if (fileIn) {
             // Declare vars to be read in
             string name, pos, newstring;

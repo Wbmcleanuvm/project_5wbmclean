@@ -82,27 +82,30 @@ public:
         // This will fill the table with default Keyables and EMPTY statuses
         table.resize(nextPrime(tableSize));
         numItems = 0;
+        hashCollisions = 0;
     }
 
     // Insert
+    // Insert
     void insert(string key, Keyable value) {
         if (!find(key)) {
-            // Hash the key to get an index
             unsigned long index = hornerHash(key);
-            // Probe until we find a non-filled index
+            unsigned long originalIndex = index;
             int n = 0;
+
             while (table[index].status == FILLED) {
-                // Add one to the index for linear probing
-                index += pow(n,n);
-                index %= table.size();
+                // Count collision
+                ++hashCollisions;
+                ++n;
+                index = (originalIndex + n * n) % table.size();
             }
+
             table[index].key = key;
             table[index].value = value;
             if (table[index].status == EMPTY) {
                 ++numItems;
                 table[index].status = FILLED;
-                // Rehash when more than half the table is filled
-                if (numItems > table.size()/2) {
+                if (numItems > table.size() / 2) {
                     rehash();
                 }
             } else {
@@ -113,47 +116,38 @@ public:
 
     // Find
     optional<Keyable> find(string key) const {
-        // Hash the key to get an index
-        unsigned long index = hornerHash(key);
+        unsigned long originalIndex = hornerHash(key);
+        unsigned long index = originalIndex;
         int n = 0;
-        while (table[index].status != EMPTY) {
-            // Check the index to see if the key matches
-            if (table[index].status == FILLED && table[index].key == key) {
-                // We found the item
 
+        while (table[index].status != EMPTY) {
+            if (table[index].status == FILLED && table[index].key == key) {
                 return table[index].value;
             }
-            // Add one to the index for linear probing
-            index += pow(n,n);
-            index %= table.size();
-            n += 1;
+            ++n;
+            index = (originalIndex + n * n) % table.size();
         }
-        // We didn't find the item
         return nullopt;
     }
 
     // Remove
     bool remove(string key) {
-        // Hash the key to get an index
-        unsigned long index = hornerHash(key);
+        unsigned long originalIndex = hornerHash(key);
+        unsigned long index = originalIndex;
         int n = 0;
+
         while (table[index].status != EMPTY) {
-            // Check the index to see if the key matches
             if (table[index].status == FILLED && table[index].key == key) {
-                // We found the item
-                setHashCollisions(getHashCollisions() + 1);
-                // Remove it
                 table[index].key = string();
                 table[index].value = Keyable();
                 table[index].status = REMOVED;
+                --numItems;
                 return true;
             }
-            // Add one to the index for linear probing
-            index += pow(n,n);
-            index %= table.size();
-            n += 1;
+            ++hashCollisions;
+            ++n;
+            index = (originalIndex + n * n) % table.size();
         }
-        // We didn't find the item
         return false;
     }
 

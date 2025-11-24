@@ -59,9 +59,13 @@ public:
     // Insert
     bool insert(string key, Keyable item) {
         // If the item is already in the table, do not insert it
+
         if (!find(key)) {
             // Hash the key to get an index
             unsigned long index = hornerHash(key);
+            if (!table[index].empty()) {
+                ++collisions;
+            }
             // Put the item at that index in the table
             table[index].push_back({key, item});
             return true;
@@ -77,7 +81,7 @@ public:
         for (const pair& p : table[index]) {
             if (p.key == key) {
                 // We found the item
-                setCollisions(getCollisions() + 1);
+
                 return p.value;
             }
         }
