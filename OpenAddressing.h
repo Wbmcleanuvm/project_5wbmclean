@@ -10,6 +10,7 @@ using std::cout, std::endl, std::nullopt, std::optional, std::string, std::vecto
 
 template<typename Keyable>
 class QuadraticProbing {
+
 private:
     enum state {EMPTY, FILLED, REMOVED};
     int hashCollisions;
@@ -28,12 +29,7 @@ private:
         }
         return hashVal % table.size();
     }
-    int getHashCollisions() {
-        return hashCollisions;
-    }
-    void setHashCollisions(int n) {
-        hashCollisions = n;
-    }
+
 
     // Find the next prime number
     int nextPrime(int n) {
@@ -74,6 +70,13 @@ private:
     }
 
 public:
+
+    int getHashCollisions() {
+        return hashCollisions;
+    }
+    void setHashCollisions(int n) {
+        hashCollisions = n;
+    }
     // Constructor
     QuadraticProbing(unsigned long tableSize) {
         // This will fill the table with default Keyables and EMPTY statuses

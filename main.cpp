@@ -36,6 +36,7 @@ int main() {
     int n,s;
     vector<SeparateChaining<Player>> sep;
     vector<QuadraticProbing<Player>> q;
+    ofstream outChaining,outAddressing;
     for (int o = 0; o < 2; o++) {
         n,s = players.size() + 100 ;
         for (int i = 0; n < 5; i++) {
@@ -45,22 +46,30 @@ int main() {
             if (n == 3) n = players.size() * 2;
         }
     }
+    outAddressing.open("Addressing.csv");
+    outChaining.open("../Chaining.csv");
 
     int i = 0;
     while(i < players.size()) {
         for (int o = 0; o < 5; o++) {
             sep[o].insert(getKeyOne(players[i]), players[i]);
+            outChaining << i << "," << o << ","<< sep[o].getCollisions() << ",";
             q[o].insert(getKeyOne(players[i]), players[i]);
+            outAddressing << i << "," << o << "," << q[o].getHashCollisions() << ",";
         }
         for (int o = 5; o < 10; o++) {
             sep[o].insert(getKeyTwo(players[i]), players[i]);
+            outChaining << i << "," << o << ","<< sep[o].getCollisions() << endl;
             q[o].insert(getKeyTwo(players[i]), players[i]);
+            outAddressing << i << "," << o << "," << q[o].getHashCollisions() << endl;
+
         }
+
         i+=1;
     }
-    for (int e = 0; e < 10; e++){
-
-    }
+    outChaining.close();
+    outAddressing.close();
+    cout << q[1].getHashCollisions() << endl;
     return 0;
 };
 
