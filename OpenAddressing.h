@@ -117,8 +117,8 @@ public:
             // Check the index to see if the key matches
             if (table[index].status == FILLED && table[index].key == key) {
                 // We found the item
-                return table[index].value;
 
+                return table[index].value;
             }
             // Add one to the index for linear probing
             index += pow(n,n);

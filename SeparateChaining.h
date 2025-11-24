@@ -70,7 +70,7 @@ public:
     }
 
     // Find
-    optional<Keyable> find(string key) const {
+    optional<Keyable> find(string key){
         // Hash the key to get an index
         unsigned long index = hornerHash(key);
         // Check each item in the list at the index to see if the key matches
@@ -122,8 +122,7 @@ public:
     void setCollisions(int c) {
         collisions = c;
     }
-
-    int getCollisions() const {
+    int getCollisions(){
         return collisions;
     }
 };
